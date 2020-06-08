@@ -63,7 +63,7 @@ public class PayDemoController {
 
 		Map<String, Object> addition = new HashMap<String, Object>();
 		addition.put("timestamp", timestamp);
-		addition.put("attrs", timestamp);
+//		addition.put("attrs", timestamp);
 
 		if ((userAgent != null) && userAgent.contains("AlipayClient")) {
 			// AliTransactionType
@@ -131,7 +131,7 @@ public class PayDemoController {
 			payHtml = manager.toPay(payOrder);
 		}
 
-		String html = "<!DOCTYPE HTML><html><head><meta charset='htf-8' /><meta name='viewport' content='width=device-width, initial-scale=1.0'/><title>YC支付中心</title><style> body{font-family: 'Microsoft YaHei';} #amount,#error{height: 80px; line-height: 80px; text-align: center; color: #f00; font-size: 30px; font-weight: bold;} #error{font-size: 20px;} #info{padding: 0 10px; font-size: 12px;} table{width: 100%; border-collapse: collapse;} tr{border: 1px solid #ddd;} td{padding: 10px;} .fr{text-align: right; font-weight: bold;}</style><script src='//cdn.jsdelivr.net/jquery/1.12.1/jquery.min.js'></script></head><body><div id='amount'>¥ "
+		String html = "<!DOCTYPE HTML><html><head><meta charset='htf-8' /><meta name='viewport' content='width=device-width, initial-scale=1.0'/><title>HEXA支付中心</title><style> body{font-family: 'Microsoft YaHei';} #amount,#error{height: 80px; line-height: 80px; text-align: center; color: #f00; font-size: 30px; font-weight: bold;} #error{font-size: 20px;} #info{padding: 0 10px; font-size: 12px;} table{width: 100%; border-collapse: collapse;} tr{border: 1px solid #ddd;} td{padding: 10px;} .fr{text-align: right; font-weight: bold;}</style><script src='//cdn.jsdelivr.net/jquery/1.12.1/jquery.min.js'></script></head><body><div id='amount'>¥ "
 				+ amount + "</div><div id='info'><table><tr><td>购买商品</td><td class='fr'>" + goodsName
 				+ "</td></tr><tr><td>收款方</td><td class='fr'>" + receiveName + "</td></tr></table></div>";
 		html += payHtml + "</body></html>";
