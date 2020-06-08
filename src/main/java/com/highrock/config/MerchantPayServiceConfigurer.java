@@ -1,0 +1,124 @@
+package com.highrock.config;
+
+import com.highrock.handlers.AliPayMessageHandler;
+import com.highrock.handlers.WxPayMessageHandler;
+import com.highrock.interceptor.AliPayMessageInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.annotation.Configuration;
+
+import com.egzosn.pay.common.http.HttpConfigStorage;
+import com.egzosn.pay.spring.boot.core.PayServiceConfigurer;
+import com.egzosn.pay.spring.boot.core.configurers.MerchantDetailsServiceConfigurer;
+import com.egzosn.pay.spring.boot.core.configurers.PayMessageConfigurer;
+import com.egzosn.pay.spring.boot.core.merchant.PaymentPlatform;
+import com.egzosn.pay.spring.boot.core.provider.merchant.platform.AliPaymentPlatform;
+import com.egzosn.pay.spring.boot.core.provider.merchant.platform.PaymentPlatforms;
+import com.egzosn.pay.spring.boot.core.provider.merchant.platform.WxPaymentPlatform;
+
+
+/**
+ * 支付服务配置
+ *
+ * @author egan
+ *         email egzosn@gmail.com
+ *         date 2019/5/26.19:25
+ */
+@Configuration
+public class MerchantPayServiceConfigurer implements PayServiceConfigurer {
+    @Autowired
+    private AutowireCapableBeanFactory spring;
+    @Autowired
+    private AliPayMessageHandler aliPayMessageHandler;
+    @Autowired
+    private WxPayMessageHandler wxPayMessageHandler;
+    
+    //微信公众号appid
+	public static final String wxAppId = "";
+	//微信公众号秘钥
+	public static final String wxAppSecret = "";
+    
+    /**
+     * 商户配置
+     *
+     * @param merchants 商户配置
+     */
+    @Override
+    public void configure(MerchantDetailsServiceConfigurer merchants)  {
+//        数据库文件存放 /doc/sql目录下
+//        merchants.jdbc().template(jdbcTemplate);
+        //微信请求配置，详情参考https://gitee.com/egzosn/pay-java-parent项目中的使用
+        HttpConfigStorage wxHttpConfigStorage = new HttpConfigStorage();
+//        wxHttpConfigStorage.setKeystore("http://www.egzosn.com/certs/ssl 退款证书");
+//        wxHttpConfigStorage.setCertStoreType(CertStoreType.URL);
+//        wxHttpConfigStorage.setStorePassword("ssl 证书对应的密码， 默认为商户号");
+        //内存Builder方式
+        merchants.inMemory()
+                .ali()
+                .detailsId("1")
+                .appid("2021001166680334")
+                //应用私钥
+                .keyPrivate("MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCsrlJ3E09rODwhRdLI1O53Z7x3HAgadqkkNwmAH2DGGQhywsoLXLmc3QzjGcPE7oKTPLtT93QsMNRBqTr3I8LSqvU30YPNqDdfXQGK1WEsMgPMnNYNc2/TjHqbUZxk78gaDkc7/TDlKQ8yzppFDja4/BuH0WZSBxMbeYa3IEb7N9Yry1ij/2LITTW4wv6DdzWM85jOBpS+2782XeXZDRp7oOY+x5aIi/EWBbeSuB2w2szDPphV62Q0EL9wSMvhu/cF5FfPtAZU733KiWr2kWORIqJR7EaI0L89RA8qASK5QmglxUltkvV1w91Ac3XpgPqD9hPWpwNhjUBVGxlUnU3NAgMBAAECggEAX/5IOYmyjJgmVRjLpHk6V4aDbnNWzd9JB6jQzziiQ32HBMTkLIzPYjRABb885SzxyYfpWzQkkKxUUmwRK3Hly9bdmroN2zW4EntRcCxOaJMlKYnGNJQHhkKBpfYoSrRBOLrXPrHxjHLW0BeqCtlr8kmzxDzT9KWaKZvVF9gJnXzy/CP9/j3vhDjSJviWnXTjAp3s8lh8lvEy4LGGUMwLHnWOienVsa6dQ/iXqHxmWnZBMsvhU0e5G+IcBul40YonyzvLUvkfGKV+X2GhfBFxY9c69j/k/edb/9jie4l2YC81JHDjyi+msgt0RJgwHCJKOgRtKpi3C4N+bsQ9kGkEwQKBgQDUUq/YQKMDvUcMnxNCKnfEpuX+60pPjn9IOtyOn+MzSC1V3i4Q6I45Fz5ErtcwiJAlh/AXLya0urBJxG8pmwQdJoKPxrGbbLZl9VI0N2WIIzidxjIq9QVLFM5JFyY4wh4JExznZ9zaat8XXu4GwCHF3vOjJYK2bvov1M58mQH4zwKBgQDQNANe3mLoamraEIEYRZRLEeTK5xT747NNmGy3ju4eqrvDpgWRkutJr0A6VLp75L7vWOVa0bVrp4GSDWZItKcImuNAys4frhCukL8iTQkicnaP3NL85lfOuZIzqRaZn6IkPz/g/SSBHad0e3X/mh721bNaNo2ied1PVThmnzp+owKBgDHcEQs5co6IPk0Kdh1Nl76Iau5IFrVEA0PU/sJHbbU3N944RJ0X334spSS/4iy1hRQrLghjvDUougk4pdohWv/1cSeOQ1r6VoLu7xTwBVnI25zBVDqeO1X8Vsz3MLSXcTI0WM9Gpqhr/GOimUbgi43J43DmeCGbQglFcg/0ZnAlAoGANNWuMUnwAZjXysS7beRiUHaW/+KKUa2j18IhfKdZyBB9m5Wq/hkxej5t5x+PP1d6GJUPhu+GwW39lImv9i1Z4fYkS1Hr4uAyPYpf5p1z/vjbG4DnTeRKThyLfG6hXJTE+bvPQxIaTGWxE/8sn5OF3g+29uK3KI8SWUqACJLJrk8CgYAwL/5+CsAcZ5jIbuqQat6rSP1/7WJh33v4yRTYpfQhE9TKit562ilSHb5MKhvKbKQsW5zRc/41VfGC34Owuu/DMD05dXkqHQnzkQsJBcWMTyhSk14cOphfMQJSzbydBCtmDGnDabSRq2Rmd+G3DLxzsRa8IJuu4qhPdbTtfA28zg==")
+                //支付宝公钥
+                .keyPublic("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs88ZI92REyYsSq82/qiYSohS/BGtUWMvvcTNzv0cCtgPy/hHMg96vsGfYxXS9pa4QWKr3yE7UcqlWxJLMkI3U76D9miNhBalO9zsWCLM+T2dEBvtExsxSiaV7g/LhaIDPeRs6wZ/a3ceP9uLO2EKDBu4+KpGnvNxIlU5qVa1fw3SkXbk488dl0cek5fUkkZdmWLQQHDidQ2Jtpe+qZ/a3aijCi7vXyyNWFy7kB8YWEIwa3Qfbs6czgK3i0kfjHWVguj8l73jzbn/AdF6VKcd3o5O24eds/3Hwu57bckJHcf3avlZRxsv9RSWiid9KEIJ0adRgMgQsvA3XPmY3FJcCwIDAQAB")
+                .inputCharset("utf-8")
+                .notifyUrl("http://pay.egzosn.com/PayDemo/payBack1.json")
+                .returnUrl("http://pay.egzosn.com/PayDemo/payBack1.json")
+                .pid("2088831671105662")
+                .seller("2088831671105662")
+                .signType("RSA2")
+                .test(false)
+                .and()
+                .wx()
+                .detailsId("2")
+                .appid("公众号id")
+                .mchId("商户id")
+                .secretKey("商户秘钥")
+                .notifyUrl("http://pay.egzosn.com/PayDemo/payBack2.json")
+                .returnUrl("http://pay.egzosn.com/PayDemo/payBack2.json")
+                .inputCharset("utf-8")
+                .signType("MD5")
+                //设置请求相关的配置
+                .httpConfigStorage(wxHttpConfigStorage)
+                .test(false)
+                .and()
+        ;
+
+      /*  //------------内存手动方式------------------
+        UnionMerchantDetails unionMerchantDetails = new UnionMerchantDetails();
+        unionMerchantDetails.detailsId("3");
+        //内存方式的时候这个必须设置
+        unionMerchantDetails.setCertSign(true);
+        unionMerchantDetails.setMerId("700000000000001");
+        //公钥，验签证书链格式： 中级证书路径;
+        unionMerchantDetails.setAcpMiddleCert("D:/certs/acp_test_middle.cer");
+        //公钥，根证书路径
+        unionMerchantDetails.setAcpRootCert("D:/certs/acp_test_root.cer");
+        //私钥, 私钥证书格式： 私钥证书路径
+        unionMerchantDetails.setKeyPrivateCert("D:/certs/acp_test_sign.pfx");
+        //私钥证书对应的密码
+        unionMerchantDetails.setKeyPrivateCertPwd("000000");
+        //证书的存储方式
+        unionMerchantDetails.setCertStoreType(CertStoreType.PATH);
+        unionMerchantDetails.setNotifyUrl("http://127.0.0.1/payBack4.json");
+        // 无需同步回调可不填  app填这个就可以
+        unionMerchantDetails.setReturnUrl("http://127.0.0.1/payBack4.json");
+        unionMerchantDetails.setInputCharset("UTF-8");
+        unionMerchantDetails.setSignType("RSA2");
+        unionMerchantDetails.setTest(true);
+        //手动加入商户容器中
+        merchants.inMemory().addMerchantDetails(unionMerchantDetails);*/
+    }
+    /**
+     * 商户配置
+     *
+     * @param configurer 支付消息配置
+     */
+    @Override
+    public void configure(PayMessageConfigurer configurer) {
+        PaymentPlatform aliPaymentPlatform = PaymentPlatforms.getPaymentPlatform(AliPaymentPlatform.platformName);
+        configurer.addHandler(aliPaymentPlatform, aliPayMessageHandler);
+        configurer.addInterceptor(aliPaymentPlatform, spring.getBean(AliPayMessageInterceptor.class));
+        configurer.addHandler(PaymentPlatforms.getPaymentPlatform(WxPaymentPlatform.platformName),wxPayMessageHandler);
+    }
+}
